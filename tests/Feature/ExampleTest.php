@@ -9,21 +9,13 @@ use Tests\TestCase;
 
 class ExampleTest extends TestCase
 {
-    /**
-     * A basic test example.
-     *
-     * @return void
-     */
-    public function testBasicTest()
-    {
-        $response = $this->get('/');
-
-        $response->assertStatus(200);
-    }
-
     public function testBusFake()
     {
         Bus::fake([NeedFakeJob::class]);
-        $this->artisan('test:fake');
+
+        // want NormalJob dispatch
+        $this->artisan('test:busfake');
+
+        $this->assertSame('value', cache('key'), 'NormalJob not dispatch!');
     }
 }

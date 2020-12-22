@@ -31,6 +31,6 @@ class NormalJob implements ShouldQueue
      */
     public function handle()
     {
-        dump(__METHOD__);
+        cache(['key' => 'value']);
     }
 }
