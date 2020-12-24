@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Jobs\NeedFakeJob;
 use App\Jobs\NormalJob;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Bus;
@@ -39,8 +40,10 @@ class BusFakeCommand extends Command
      */
     public function handle()
     {
-        $batch = Bus::batch([])->dispatch();
-        $batch->add([new NormalJob()]);
+        Bus::batch([
+            new NeedFakeJob(),
+            new NormalJob(),
+        ])->dispatch();
 
         return 0;
     }

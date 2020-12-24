@@ -3,8 +3,9 @@
 namespace Tests\Feature;
 
 use App\Jobs\NeedFakeJob;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Jobs\NormalJob;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Cache;
 use Tests\TestCase;
 
 class ExampleTest extends TestCase
@@ -13,9 +14,12 @@ class ExampleTest extends TestCase
     {
         Bus::fake([NeedFakeJob::class]);
 
-        // want NormalJob dispatch
-        $this->artisan('test:busfake');
+        Bus::batch([
+            new NeedFakeJob(),
+            new NormalJob(),
+        ])->dispatch();
 
-        $this->assertSame('value', cache('key'), 'NormalJob not dispatch!');
+        Bus::assertDispatched(NeedFakeJob::class);
+        self::assertSame('value', Cache::get('key'), 'NormalJob not dispatch!');
     }
 }
